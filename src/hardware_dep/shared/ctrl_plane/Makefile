@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -pthread -std=c99
+CFLAGS=-Wall -pthread -std=c99 -g -O0
 LIB=
 
 ifneq ($(P4_GCC_OPTS),)

@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Highlight colours
 cc="\033[1;33m"     # yellow
@@ -52,9 +53,13 @@ echo -e "Using DPDK version $cc${DPDK_VSN}$nn"
 echo
 
 # Download libraries
-sudo apt-get update && sudo apt-get -y install g++ git automake libtool libgc-dev bison flex libfl-dev libgmp-dev libboost-dev libboost-iostreams-dev pkg-config python python-scapy python-ipaddr tcpdump cmake python-setuptools libprotobuf-dev libnuma-dev curl &
-WAITPROC_APTGET="$!"
-[ $PARALLEL_INSTALL -ne 0 ] || wait "$WAITPROC_APTGET"
+if type dnf; then
+    sudo dnf -y update && sudo dnf install -y gcc-c++ git automake libtool gc-devel bison flex flex-devel gmp-devel boost-devel boost-iostreams pkgconf-pkg-config python-scapy python-ipaddr tcpdump cmake python-setuptools protobuf-devel numactl-devel curl doxygen &
+else
+    sudo apt-get update && sudo apt-get -y install g++ git automake libtool libgc-dev bison flex libfl-dev libgmp-dev libboost-dev libboost-iostreams-dev pkg-config python python-scapy python-ipaddr tcpdump cmake python-setuptools libprotobuf-dev libnuma-dev curl &
+fi
+WAITPROC_PKGGET="$!"
+[ $PARALLEL_INSTALL -ne 0 ] || wait "$WAITPROC_PKGGET"
 
 [ ! -d "dpdk-${DPDK_VSN}" ] && wget http://fast.dpdk.org/rel/dpdk-$DPDK_FILEVSN.tar.xz && tar xJf dpdk-$DPDK_FILEVSN.tar.xz && rm dpdk-$DPDK_FILEVSN.tar.xz &
 WAITPROC_DPDK="$!"
@@ -69,13 +74,13 @@ WAITPROC_PROTOBUF="$!"
 WAITPROC_P4C="$!"
 [ $PARALLEL_INSTALL -ne 0 ] || wait "$WAITPROC_P4C"
 
-[ ! -d t4p4s ] && git clone --recursive https://github.com/P4ELTE/t4p4s &
+[ ! -d t4p4s ] && git clone -b dev --recursive https://github.com/lkpdn/t4p4s &
 WAITPROC_T4P4S="$!"
 [ $PARALLEL_INSTALL -ne 0 ] || wait "$WAITPROC_T4P4S"
 
 
 # Wait for apt-get to finish
-[ $PARALLEL_INSTALL -ne 1 ] || wait "$WAITPROC_APTGET"
+[ $PARALLEL_INSTALL -ne 1 ] || wait "$WAITPROC_PKGGET"
 
 
 
@@ -86,7 +91,7 @@ WAITPROC_T4P4S="$!"
 export RTE_SDK=`pwd`/`ls -d dpdk*$DPDK_FILEVSN*/`
 
 cd "$RTE_SDK"
-make install DESTDIR="${RTE_TARGET}" T="${RTE_TARGET}" -j4
+make install DESTDIR="${RTE_TARGET}" T="${RTE_TARGET}" -j4 EXTRA_CFLAGS='-g -O0'
 cd ..
 
 
