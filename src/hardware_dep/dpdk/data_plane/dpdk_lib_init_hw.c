@@ -64,10 +64,7 @@ struct rte_eth_conf port_conf = {
     .rx_adv_conf = {
         .rss_conf = {
             .rss_key = NULL,
-            .rss_hf = 
-		// 0x38d34,
-		ETH_RSS_IPV4 | ETH_RSS_NONFRAG_IPV4_TCP | ETH_RSS_NONFRAG_IPV4_UDP | ETH_RSS_IPV6 | ETH_RSS_NONFRAG_IPV6_TCP | ETH_RSS_NONFRAG_IPV6_UDP | ETH_RSS_IPV6_EX | ETH_RSS_IPV6_TCP_EX | ETH_RSS_IPV6_UDP_EX,
-		// ETH_RSS_IP, // 0xa38c
+            .rss_hf = 0,
         },
     },
     .txmode = {
