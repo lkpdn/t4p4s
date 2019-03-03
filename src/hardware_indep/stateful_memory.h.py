@@ -108,12 +108,12 @@ def gen_make_smem_code(smem, smem_size, smem_type, locked = False, bit_width = 3
 for t, meter in hlir16.meters:
     size = meter.arguments[0].expression.value
 
-    #= gen_make_smem_code(meter, size, 'direct_meter', True)
+    gen_make_smem_code(meter, size, 'direct_meter', True)
 
 for t, counter in hlir16.counters:
     size = counter.arguments[0].expression.value
 
-    #= gen_make_smem_code(counter, size, 'direct_counter', True)
+    gen_make_smem_code(counter, size, 'direct_counter', True)
 
 for t, reg in hlir16.registers:
     # result_type_bitsize = reg.type.arguments[0].size
@@ -126,7 +126,7 @@ for t, reg in hlir16.registers:
     # str(reg.type.arguments[0].isSigned)
     # str(reg.arguments[0].expression.value)
 
-    #= gen_make_smem_code(reg, size, 'reg', True, bit_width, is_signed)
+    gen_make_smem_code(reg, size, 'reg', True, bit_width, is_signed)
 
 #} } global_state_t;
 
@@ -135,10 +135,10 @@ for t, reg in hlir16.registers:
 for table in hlir16.tables:
     #{ typedef struct local_state_${table.name}_s {
     for counter in table.counters:
-        #= gen_make_smem_code(counter, 1, 'counter')
+        gen_make_smem_code(counter, 1, 'counter')
 
     for meter in table.meters:
-        #= gen_make_smem_code(meter, 1, 'meter')
+        gen_make_smem_code(meter, 1, 'meter')
 
     #} } local_state_${table.name}_t;
 
